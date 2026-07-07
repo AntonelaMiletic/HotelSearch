@@ -1,0 +1,32 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore API project
+        run: dotnet restore HotelSearch/HotelSearch.csproj
+
+      - name: Restore test project
+        run: dotnet restore HotelSearch.Tests/HotelSearch.Tests.csproj
+
+      - name: Build API project
+        run: dotnet build HotelSearch/HotelSearch.csproj --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test HotelSearch.Tests/HotelSearch.Tests.csproj --configuration Release
